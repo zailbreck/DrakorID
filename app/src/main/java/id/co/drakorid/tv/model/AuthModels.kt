@@ -1,5 +1,7 @@
 package id.co.drakorid.tv.model
 
+import com.google.gson.annotations.SerializedName
+
 // ── Requests ──
 
 data class LoginRequest(val email: String, val password: String)
@@ -13,7 +15,7 @@ data class ResetPasswordRequest(val email: String)
 // ── Responses ──
 
 data class AuthEntity(
-    val jwtToken: String?,
+    @SerializedName("jwt_token") val jwtToken: String?,
     val user: UserEntity?
 )
 
@@ -22,7 +24,7 @@ data class UserEntity(
     val name: String?,
     val email: String?,
     val picture: String?,
-    val isPremium: Boolean?,
+    @SerializedName("is_premium") val isPremium: Boolean?,
     val role: String?
 )
 

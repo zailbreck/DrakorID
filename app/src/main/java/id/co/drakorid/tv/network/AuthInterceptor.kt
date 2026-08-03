@@ -13,16 +13,14 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking { tokenManager.getToken() }
-        val request = if (token != null) {
-            chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .addHeader("Accept", "application/json")
-                .build()
-        } else {
-            chain.request().newBuilder()
-                .addHeader("Accept", "application/json")
-                .build()
+        val builder = chain.request().newBuilder()
+            .addHeader("Accept", "application/json")
+
+        // API ini pakai raw token tanpa prefix "Bearer "
+        if (token != null) {
+            builder.addHeader("Authorization", token)
         }
-        return chain.proceed(request)
+
+        return chain.proceed(builder.build())
     }
 }
