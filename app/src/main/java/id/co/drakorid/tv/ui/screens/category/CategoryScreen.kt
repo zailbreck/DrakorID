@@ -1,31 +1,28 @@
 package id.co.drakorid.tv.ui.screens.category
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import id.co.drakorid.tv.ui.components.TvLoadingIndicator
-import androidx.tv.material3.Text
 import id.co.drakorid.tv.model.CategoryEntity
-import id.co.drakorid.tv.ui.components.TvMovieCard
+import id.co.drakorid.tv.ui.components.PhoneLoadingIndicator
+import id.co.drakorid.tv.ui.components.PhoneMovieCard
 import id.co.drakorid.tv.ui.theme.TvColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     onMovieClick: (String) -> Unit,
@@ -34,39 +31,35 @@ fun CategoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF020617))
-    ) {
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(32.dp)) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Kategori",
-                        color = TvColors.textPrimary,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    CategoryBackButton(onBack)
-                }
-            }
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Kategori", color = TvColors.textPrimary) },
+                navigationIcon = { TextButton(onClick = onBack) { Text("←", color = TvColors.primary, fontSize = 20.sp) } },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF020617))
+            )
+        },
+        containerColor = Color(0xFF020617)
+    ) { padding ->
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             // Category chips
-            item {
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+            if (uiState.categories.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(uiState.categories) { category ->
-                        CategoryChip(
-                            category = category,
-                            isSelected = uiState.selectedCategory == category.name,
-                            onClick = { category.name?.let(viewModel::selectCategory) }
+                    uiState.categories.take(5).forEach { category ->
+                        val isSelected = uiState.selectedCategory == category.name
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { category.name?.let(viewModel::selectCategory) },
+                            label = { Text(category.name ?: "", fontSize = 12.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = TvColors.focusBackground,
+                                selectedLabelColor = TvColors.primary
+                            )
                         )
                     }
                 }
@@ -75,123 +68,36 @@ fun CategoryScreen(
             // Movies
             when {
                 uiState.isLoadingMovies -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            TvLoadingIndicator()
-                        }
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        PhoneLoadingIndicator()
                     }
                 }
-
                 uiState.movies.isNotEmpty() -> {
-                    item {
-                        LazyRow(
-                            modifier = Modifier.padding(top = 16.dp),
-                            contentPadding = PaddingValues(horizontal = 4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(uiState.movies) { movie ->
-                                var focused by remember { mutableStateOf(false) }
-                                val requester = remember { FocusRequester() }
-
-                                TvMovieCard(
-                                    title = movie.title ?: "Unknown",
-                                    posterUrl = movie.poster,
-                                    rating = movie.rating,
-                                    year = movie.year,
-                                    isFocused = focused,
-                                    focusRequester = requester,
-                                    onFocusChanged = { focused = it },
-                                    onClick = { movie.id?.let(onMovieClick) },
-                                    modifier = Modifier.width(140.dp)
-                                )
-                            }
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 120.dp),
+                        modifier = Modifier.fillMaxSize().padding(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(8.dp)
+                    ) {
+                        items(uiState.movies) { movie ->
+                            PhoneMovieCard(
+                                title = movie.title ?: "Unknown",
+                                posterUrl = movie.poster,
+                                rating = movie.rating,
+                                year = movie.year,
+                                onClick = { movie.id?.let(onMovieClick) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }
-
                 uiState.selectedCategory != null -> {
-                    item {
-                        Text(
-                            text = "Tidak ada film di kategori ini",
-                            color = TvColors.textMuted,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(top = 32.dp)
-                        )
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Tidak ada film", color = TvColors.textMuted)
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    category: CategoryEntity,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    var focused by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .background(
-                color = when {
-                    isSelected -> TvColors.focusBackground
-                    focused -> TvColors.focusBackground.copy(alpha = 0.6f)
-                    else -> TvColors.cardBackground
-                },
-                shape = RoundedCornerShape(20.dp)
-            )
-            .then(
-                if (focused || isSelected) {
-                    Modifier.border(2.dp, TvColors.focusBorder, RoundedCornerShape(20.dp))
-                } else {
-                    Modifier.border(1.dp, TvColors.cardBorder, RoundedCornerShape(20.dp))
-                }
-            )
-            .padding(horizontal = 24.dp, vertical = 12.dp)
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = category.name ?: "",
-                color = if (focused || isSelected) TvColors.focusBorder else TvColors.textPrimary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            if (category.totalMovies != null) {
-                Text(
-                    text = "${category.totalMovies} film",
-                    color = TvColors.textMuted,
-                    fontSize = 10.sp,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CategoryBackButton(onBack: () -> Unit) {
-    var focused by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .background(
-                color = if (focused) TvColors.focusBackground else TvColors.cardBackground,
-                shape = RoundedCornerShape(6.dp)
-            )
-            .padding(horizontal = 20.dp, vertical = 10.dp)
-    ) {
-        Text(
-            text = "← Kembali",
-            color = if (focused) TvColors.focusBorder else TvColors.textPrimary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }

@@ -1,17 +1,17 @@
 package id.co.drakorid.tv.ui.screens.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import id.co.drakorid.tv.ui.components.TvLoadingIndicator
-import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import id.co.drakorid.tv.model.EpisodeEntity
+import id.co.drakorid.tv.ui.components.PhoneLoadingIndicator
 import id.co.drakorid.tv.ui.theme.TvColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(
     onPlay: (String) -> Unit,
@@ -36,226 +36,110 @@ fun MovieDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movie = uiState.movie
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xFF020617))) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(movie?.title ?: "Detail", color = TvColors.textPrimary) },
+                navigationIcon = { TextButton(onClick = onBack) { Text("←", color = TvColors.primary, fontSize = 20.sp) } },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF020617))
+            )
+        },
+        containerColor = Color(0xFF020617)
+    ) { padding ->
         if (uiState.isLoading && movie == null) {
-            TvLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-            return@Box
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                PhoneLoadingIndicator()
+            }
+            return@Scaffold
         }
 
         if (movie == null) {
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Detail tidak ditemukan", color = TvColors.textPrimary)
-                FocusableButton("← Kembali", onBack)
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                Text("Tidak ditemukan", color = TvColors.textPrimary)
             }
-            return@Box
+            return@Scaffold
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            // Header banner with gradient
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(380.dp)
-                ) {
-                    AsyncImage(
-                        model = movie.banner ?: movie.poster,
-                        contentDescription = movie.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color(0xFF020617).copy(alpha = 0.7f),
-                                        Color(0xFF020617)
-                                    )
-                                )
-                            )
-                    )
-
-                    // Back button
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(20.dp)
-                    ) {
-                        FocusableButton("← Kembali", onBack)
-                    }
-                }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+        ) {
+            // Banner
+            Box(modifier = Modifier.fillMaxWidth().height(240.dp)) {
+                AsyncImage(
+                    model = movie.banner ?: movie.poster,
+                    contentDescription = movie.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                Box(modifier = Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(colors = listOf(Color.Transparent, Color(0xFF020617)))
+                ))
             }
 
-            // Title + meta
-            item {
-                Column(modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)) {
-                    Text(
-                        text = movie.title ?: "",
-                        color = TvColors.textPrimary,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    val meta = listOfNotNull(
-                        movie.year,
-                        movie.duration,
-                        movie.country,
-                        movie.rating?.let { "★ %.1f".format(it) }
-                    ).joinToString(" · ")
-                    if (meta.isNotEmpty()) {
-                        Text(
-                            text = meta,
-                            color = TvColors.textSecondary,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
-                    if (movie.genre != null) {
-                        Text(
-                            text = movie.genre,
-                            color = TvColors.primary,
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
-                }
-            }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(movie.title ?: "", color = TvColors.textPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-            // Description
-            if (!movie.description.isNullOrBlank()) {
-                item {
-                    Text(
-                        text = movie.description,
-                        color = TvColors.textSecondary,
-                        fontSize = 14.sp,
-                        lineHeight = 22.sp,
-                        maxLines = 6,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
-                    )
+                val meta = listOfNotNull(movie.year, movie.duration, movie.country, movie.rating?.let { "★ %.1f".format(it) }).joinToString(" · ")
+                if (meta.isNotEmpty()) {
+                    Text(meta, color = TvColors.textSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                }
+                if (movie.genre != null) {
+                    Text(movie.genre, color = TvColors.primary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+                }
+                if (!movie.description.isNullOrBlank()) {
+                    Text(movie.description, color = TvColors.textSecondary, fontSize = 14.sp, lineHeight = 22.sp, modifier = Modifier.padding(top = 12.dp))
                 }
             }
 
             // Episodes
             if (uiState.episodes.isNotEmpty()) {
-                item {
-                    Text(
-                        text = "Episode (${uiState.episodes.size})",
-                        color = TvColors.textPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 32.dp, top = 24.dp, bottom = 12.dp)
-                    )
-                }
-                item {
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(horizontal = 32.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(uiState.episodes) { episode ->
-                            EpisodeCard(episode, onClick = { episode.id?.let(onPlay) })
-                        }
+                Text("Episode", color = TvColors.textPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 16.dp, top = 8.dp))
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(uiState.episodes) { episode ->
+                        EpisodeCard(episode) { episode.id?.let(onPlay) }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
 
 @Composable
-private fun EpisodeCard(
-    episode: EpisodeEntity,
-    onClick: () -> Unit
-) {
-    var focused by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .width(200.dp)
-            .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .background(
-                color = if (focused) TvColors.focusBackground else TvColors.cardBackground,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .then(
-                if (focused) {
-                    Modifier.border(3.dp, TvColors.focusBorder, RoundedCornerShape(8.dp))
-                } else {
-                    Modifier.border(1.dp, TvColors.cardBorder, RoundedCornerShape(8.dp))
-                }
-            )
-            .padding(12.dp)
+private fun EpisodeCard(episode: EpisodeEntity, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.width(160.dp).clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = TvColors.cardBackground),
+        shape = RoundedCornerShape(10.dp)
     ) {
-        // Episode thumbnail
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(TvColors.gradientStart, RoundedCornerShape(6.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            AsyncImage(
-                model = episode.thumbnail,
-                contentDescription = episode.title,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+        Column(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = "E${episode.episodeNumber ?: ""}",
-                color = TvColors.textPrimary,
-                fontSize = 24.sp,
+                color = TvColors.primary,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-        }
-        Text(
-            text = episode.title ?: "Episode ${episode.episodeNumber ?: ""}",
-            color = TvColors.textPrimary,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-        if (episode.duration != null) {
             Text(
-                text = episode.duration,
-                color = TvColors.textSecondary,
-                fontSize = 10.sp,
-                modifier = Modifier.padding(top = 2.dp)
+                text = episode.title ?: "",
+                color = TvColors.textPrimary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 6.dp)
             )
+            if (episode.duration != null) {
+                Text(episode.duration, color = TvColors.textSecondary, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+            }
         }
-    }
-}
-
-@Composable
-private fun FocusableButton(
-    text: String,
-    onClick: () -> Unit
-) {
-    var focused by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .onFocusChanged { focused = it.isFocused }
-            .focusable()
-            .background(
-                color = if (focused) TvColors.focusBackground else TvColors.cardBackground,
-                shape = RoundedCornerShape(6.dp)
-            )
-            .padding(horizontal = 24.dp, vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = if (focused) TvColors.focusBorder else TvColors.textPrimary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }

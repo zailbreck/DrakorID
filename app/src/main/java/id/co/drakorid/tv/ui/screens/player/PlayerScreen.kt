@@ -18,8 +18,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import androidx.tv.material3.Text
-import id.co.drakorid.tv.ui.components.TvLoadingIndicator
+import androidx.compose.material3.Text
+import id.co.drakorid.tv.ui.components.PhoneLoadingIndicator
 import id.co.drakorid.tv.ui.theme.TvColors
 
 @Composable
@@ -60,7 +60,7 @@ fun PlayerScreen(
     ) {
         when {
             uiState.isLoading -> {
-                TvLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+                PhoneLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                 Text(
                     text = "Memuat video...",
                     color = TvColors.textSecondary,

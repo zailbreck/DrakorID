@@ -1,10 +1,10 @@
 package id.co.drakorid.tv.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.darkColorScheme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF22D3EE),
@@ -35,7 +35,6 @@ fun DrakorTVTheme(content: @Composable () -> Unit) {
     )
 }
 
-// Additional TV-specific colors
 object TvColors {
     val primary = Color(0xFF22D3EE)
     val error = Color(0xFFFB7185)
@@ -49,4 +48,5 @@ object TvColors {
     val gradientStart = Color(0xFF020617)
     val gradientEnd = Color(0xFF0F172A)
     val ratingStar = Color(0xFFFBBF24)
+    val onPrimary = Color(0xFF020617)
 }
