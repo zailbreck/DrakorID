@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DrakorID TV — Architecture Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; background: #020617; min-height: 100vh; padding: 2rem; color: white; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container { background: rgba(15, 23, 42, 0.5); border-radius: 1rem; border: 1px solid #1e293b; padding: 1.5rem; overflow-x: auto; }
+    svg { width: 100%; min-width: 900px; display: block; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem; }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card-dot.rose { background: #fb7185; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>DrakorID TV — Architecture</h1>
+      </div>
+      <p class="subtitle">Kotlin + Jetpack Compose for Android TV · Consuming drakorid.help REST API</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1100 780">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- ═══════════════ ANDROID TV DEVICE ═══════════════ -->
+        <rect x="30" y="40" width="500" height="440" rx="12" fill="rgba(8, 51, 68, 0.05)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="42" y="58" fill="#22d3ee" font-size="10" font-weight="600">Android TV Device (API 26+)</text>
+
+        <!-- TV UI Layer -->
+        <rect x="60" y="80" width="440" height="100" rx="8" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="280" y="105" fill="white" font-size="12" font-weight="600" text-anchor="middle">Compose TV UI Layer</text>
+        <text x="280" y="125" fill="#94a3b8" font-size="9" text-anchor="middle">HomeScreen · DetailScreen · PlayerScreen</text>
+        <text x="280" y="140" fill="#94a3b8" font-size="9" text-anchor="middle">SearchScreen · CategoryScreen · AuthScreen</text>
+        <text x="280" y="160" fill="#22d3ee" font-size="8" text-anchor="middle">D-Pad Navigation · Focus Management · Leanback Grids</text>
+
+        <!-- ViewModel Layer -->
+        <rect x="60" y="210" width="440" height="50" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="280" y="230" fill="white" font-size="11" font-weight="600" text-anchor="middle">ViewModels</text>
+        <text x="280" y="248" fill="#94a3b8" font-size="9" text-anchor="middle">HomeVM · DetailVM · PlayerVM · SearchVM · AuthVM</text>
+
+        <!-- Repository Layer -->
+        <rect x="60" y="290" width="440" height="50" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="280" y="310" fill="white" font-size="11" font-weight="600" text-anchor="middle">Repositories</text>
+        <text x="280" y="328" fill="#94a3b8" font-size="9" text-anchor="middle">MovieRepo · AuthRepo · ArtistRepo · CommentRepo</text>
+
+        <!-- Network Layer -->
+        <rect x="60" y="370" width="440" height="50" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="280" y="390" fill="white" font-size="11" font-weight="600" text-anchor="middle">Network Layer</text>
+        <text x="280" y="408" fill="#94a3b8" font-size="9" text-anchor="middle">Retrofit · OkHttp · AuthInterceptor · Gson</text>
+
+        <!-- DataStore -->
+        <rect x="60" y="450" width="200" height="25" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="160" y="467" fill="white" font-size="9" font-weight="600" text-anchor="middle">DataStore (JWT Token)</text>
+
+        <!-- ═══════════════ ARROWS — TV Internal ═══════════════ -->
+        <line x1="280" y1="180" x2="280" y2="208" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-emerald)"/>
+        <text x="295" y="197" fill="#94a3b8" font-size="8">StateFlow</text>
+
+        <line x1="280" y1="260" x2="280" y2="288" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="295" y="277" fill="#94a3b8" font-size="8">suspend</text>
+
+        <line x1="280" y1="340" x2="280" y2="368" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="295" y="357" fill="#94a3b8" font-size="8">HTTP</text>
+
+        <!-- ═══════════════ REMOTE API ═══════════════ -->
+        <rect x="660" y="100" width="220" height="70" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="770" y="125" fill="white" font-size="12" font-weight="600" text-anchor="middle">drakorid.help API</text>
+        <text x="770" y="145" fill="#94a3b8" font-size="9" text-anchor="middle">ap.drakorid.help</text>
+        <text x="770" y="160" fill="#fbbf24" font-size="8" text-anchor="middle">76 REST Endpoints</text>
+
+        <!-- API Endpoints grouped -->
+        <rect x="660" y="200" width="220" height="140" rx="6" fill="rgba(120, 53, 15, 0.15)" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <text x="670" y="218" fill="#fbbf24" font-size="9" font-weight="600">API Groups</text>
+        <text x="670" y="235" fill="#94a3b8" font-size="8">/v2/movies/*  —  Movies</text>
+        <text x="670" y="250" fill="#94a3b8" font-size="8">/v2/users/*   —  Auth</text>
+        <text x="670" y="265" fill="#94a3b8" font-size="8">/v2/artist/*  —  Artists</text>
+        <text x="670" y="280" fill="#94a3b8" font-size="8">/v2/komentar/*—  Comments</text>
+        <text x="670" y="295" fill="#94a3b8" font-size="8">/v2/generate-link/* — Streaming</text>
+        <text x="670" y="310" fill="#94a3b8" font-size="8">/v2/ost/*     —  Soundtracks</text>
+        <text x="670" y="325" fill="#94a3b8" font-size="8">/v2/category/*—  Categories</text>
+
+        <!-- JWT Auth -->
+        <rect x="660" y="370" width="220" height="45" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="770" y="390" fill="white" font-size="10" font-weight="600" text-anchor="middle">JWT Bearer Token</text>
+        <text x="770" y="406" fill="#94a3b8" font-size="8" text-anchor="middle">Authorization: Bearer {token}</text>
+
+        <!-- ═══════════════ EXOPLAYER ═══════════════ -->
+        <rect x="660" y="445" width="220" height="35" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="770" y="467" fill="white" font-size="10" font-weight="600" text-anchor="middle">ExoPlayer (HLS/MP4)</text>
+
+        <!-- ═══════════════ CROSS-BOUNDARY ARROWS ═══════════════ -->
+        <line x1="500" y1="395" x2="658" y2="135" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="580" y="270" fill="#fbbf24" font-size="8">HTTPS</text>
+        <text x="580" y="282" fill="#fbbf24" font-size="7">JSON</text>
+
+        <line x1="500" y1="395" x2="658" y2="393" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+        <text x="585" y="388" fill="#fb7185" font-size="7">JWT Auth</text>
+
+        <!-- Streaming flow -->
+        <line x1="500" y1="395" x2="658" y2="463" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="555" y="435" fill="#22d3ee" font-size="7">Video URL</text>
+
+        <!-- ═══════════════ REMOVED SECTION ═══════════════ -->
+        <rect x="30" y="510" width="850" height="110" rx="8" fill="rgba(136, 19, 55, 0.08)" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="42" y="530" fill="#fb7185" font-size="10" font-weight="600">Removed vs Original APK (73MB → ~5MB)</text>
+
+        <rect x="50" y="545" width="180" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="140" y="564" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ AdMob (Google Ads)</text>
+
+        <rect x="250" y="545" width="180" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="340" y="564" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ FAN (Facebook Ads)</text>
+
+        <rect x="450" y="545" width="180" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="540" y="564" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ Unity Ads</text>
+
+        <rect x="650" y="545" width="210" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="755" y="564" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ FCM (Push Notifications)</text>
+
+        <rect x="50" y="585" width="180" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="140" y="604" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ Premium/IAP</text>
+
+        <rect x="250" y="585" width="180" height="30" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="340" y="604" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">✕ Reward Ads Claim</text>
+
+        <rect x="450" y="585" width="200" height="30" rx="4" fill="rgba(34, 211, 238, 0.15)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="550" y="604" fill="#22d3ee" font-size="9" font-weight="600" text-anchor="middle">✓ TV-Optimized UX</text>
+
+        <rect x="670" y="585" width="190" height="30" rx="4" fill="rgba(34, 211, 238, 0.15)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="765" y="604" fill="#22d3ee" font-size="9" font-weight="600" text-anchor="middle">✓ D-Pad Navigation</text>
+
+        <!-- ═══════════════ LEGEND ═══════════════ -->
+        <text x="920" y="58" fill="white" font-size="10" font-weight="600">Legend</text>
+        <rect x="920" y="70" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="942" y="78" fill="#94a3b8" font-size="8">UI / Frontend</text>
+        <rect x="920" y="86" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="942" y="94" fill="#94a3b8" font-size="8">State / ViewModel</text>
+        <rect x="920" y="102" width="16" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="942" y="110" fill="#94a3b8" font-size="8">Repository / Data</text>
+        <rect x="920" y="118" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="942" y="126" fill="#94a3b8" font-size="8">Network / API</text>
+        <rect x="920" y="134" width="16" height="10" rx="2" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1"/>
+        <text x="942" y="142" fill="#94a3b8" font-size="8">Auth / Security</text>
+        <line x1="920" y1="156" x2="936" y2="156" stroke="#fb7185" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="942" y="159" fill="#94a3b8" font-size="8">Removed Feature</text>
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header"><div class="card-dot cyan"></div><h3>Tech Stack</h3></div>
+        <ul>
+          <li>• Kotlin 1.9.22</li>
+          <li>• Jetpack Compose for TV (alpha10)</li>
+          <li>• Hilt (DI)</li>
+          <li>• Retrofit 2 + OkHttp 4</li>
+          <li>• ExoPlayer (Media3)</li>
+          <li>• Coil (Image Loading)</li>
+          <li>• DataStore (Token)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-dot emerald"></div><h3>Architecture Pattern</h3></div>
+        <ul>
+          <li>• MVVM (Model-View-ViewModel)</li>
+          <li>• Repository Pattern</li>
+          <li>• Single-Activity (Compose Nav)</li>
+          <li>• Unidirectional Data Flow</li>
+          <li>• StateFlow for reactive UI</li>
+          <li>• suspend functions for async</li>
+          <li>• D-Pad focus management</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-dot violet"></div><h3>Key Numbers</h3></div>
+        <ul>
+          <li>• 76 API endpoints consumed</li>
+          <li>• 7 model files (20+ entities)</li>
+          <li>• 22 files in Phase 1</li>
+          <li>• ~5MB APK (vs 73MB original)</li>
+          <li>• Min SDK 26 (Android TV 8)</li>
+          <li>• 0 ad SDKs</li>
+          <li>• 0 tracking/analytics</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">DrakorID TV · Architecture Overview · August 2026</p>
+  </div>
+</body>
+</html>

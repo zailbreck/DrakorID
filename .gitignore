@@ -1,0 +1,30 @@
+# DrakorID TV — Gitignore
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Android
+local.properties
+*.apk
+*.aab
+*.ap_
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keystore
+*.jks
+*.keystore
+
+# Secrets
+google-services.json

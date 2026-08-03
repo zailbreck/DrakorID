@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- D letter for DrakorID -->
+    <path
+        android:fillColor="#22D3EE"
+        android:pathData="M30,30 L30,78 L55,78 C72,78 78,62 78,54 C78,42 68,30 55,30 Z M46,46 L55,46 C60,46 62,50 62,54 C62,58 60,62 55,62 L46,62 Z"/>
+    <!-- TV screen outline -->
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M25,82 L83,82 L88,96 L20,96 Z"/>
+</vector>

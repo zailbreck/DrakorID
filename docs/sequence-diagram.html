@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DrakorID TV — Sequence Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; background: #020617; min-height: 100vh; padding: 2rem; color: white; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #34d399; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container { background: rgba(15, 23, 42, 0.5); border-radius: 1rem; border: 1px solid #1e293b; padding: 1.5rem; overflow-x: auto; }
+    svg { width: 100%; min-width: 950px; display: block; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem; }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>DrakorID TV — Sequence Flows</h1>
+      </div>
+      <p class="subtitle">Browse → Detail → Play · Auth Flow · Search Flow</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1050 1100">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="a-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="a-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <marker id="a-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+          </marker>
+          <marker id="a-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- ═══════════════ FLOW 1: BROWSE MOVIES ═══════════════ -->
+        <text x="30" y="30" fill="#22d3ee" font-size="13" font-weight="700">Flow 1 — Browse Movies (Home Screen)</text>
+
+        <!-- Lifelines -->
+        <line x1="100" y1="50" x2="100" y2="360" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="310" y1="50" x2="310" y2="360" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="520" y1="50" x2="520" y2="360" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="730" y1="50" x2="730" y2="360" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="900" y1="50" x2="900" y2="360" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <!-- Headers -->
+        <rect x="50" y="50" width="100" height="28" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="100" y="69" fill="white" font-size="9" font-weight="600" text-anchor="middle">HomeScreen</text>
+
+        <rect x="260" y="50" width="100" height="28" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="310" y="69" fill="white" font-size="9" font-weight="600" text-anchor="middle">HomeVM</text>
+
+        <rect x="470" y="50" width="100" height="28" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="520" y="69" fill="white" font-size="9" font-weight="600" text-anchor="middle">MovieRepo</text>
+
+        <rect x="680" y="50" width="100" height="28" rx="4" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="730" y="69" fill="white" font-size="9" font-weight="600" text-anchor="middle">ApiService</text>
+
+        <rect x="850" y="50" width="100" height="28" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="900" y="69" fill="white" font-size="9" font-weight="600" text-anchor="middle">API Server</text>
+
+        <!-- Messages -->
+        <line x1="150" y1="105" x2="258" y2="105" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="204" y="98" fill="#22d3ee" font-size="8" text-anchor="middle">init(HomeScreen)</text>
+
+        <line x1="150" y1="130" x2="258" y2="130" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="204" y="123" fill="#22d3ee" font-size="8" text-anchor="middle">D-pad select "Latest"</text>
+
+        <line x1="310" y1="155" x2="468" y2="155" stroke="#34d399" stroke-width="1.5" marker-end="url(#a-emerald)"/>
+        <text x="389" y="148" fill="#34d399" font-size="8" text-anchor="middle">getLatestMovies()</text>
+
+        <line x1="520" y1="180" x2="678" y2="180" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#a-violet)"/>
+        <text x="599" y="173" fill="#a78bfa" font-size="8" text-anchor="middle">GET /v2/movies/latest</text>
+
+        <line x1="730" y1="205" x2="848" y2="205" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#a-amber)"/>
+        <text x="789" y="198" fill="#fbbf24" font-size="8" text-anchor="middle">HTTP GET</text>
+
+        <!-- Response -->
+        <line x1="848" y1="240" x2="732" y2="240" stroke="#fbbf24" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#a-amber)"/>
+        <text x="789" y="234" fill="#fbbf24" font-size="7" text-anchor="middle">200 OK · Movie[]</text>
+
+        <line x1="678" y1="265" x2="522" y2="265" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#a-violet)"/>
+        <text x="599" y="259" fill="#a78bfa" font-size="7" text-anchor="middle">List<MovieEntity></text>
+
+        <line x1="468" y1="290" x2="312" y2="290" stroke="#34d399" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#a-emerald)"/>
+        <text x="389" y="284" fill="#34d399" font-size="7" text-anchor="middle">StateFlow.update</text>
+
+        <line x1="258" y1="315" x2="152" y2="315" stroke="#22d3ee" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#a-cyan)"/>
+        <text x="204" y="309" fill="#22d3ee" font-size="7" text-anchor="middle">Recompose Grid</text>
+
+        <!-- Result box -->
+        <rect x="180" y="335" width="140" height="22" rx="4" fill="rgba(34, 211, 238, 0.1)" stroke="#22d3ee" stroke-width="0.5"/>
+        <text x="250" y="350" fill="#22d3ee" font-size="8" text-anchor="middle">TV Grid with posters</text>
+
+        <!-- ═══════════════ FLOW 2: DETAIL + PLAY ═══════════════ -->
+        <text x="30" y="395" fill="#fbbf24" font-size="13" font-weight="700">Flow 2 — Movie Detail + Play</text>
+
+        <line x1="100" y1="410" x2="100" y2="650" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="310" y1="410" x2="310" y2="650" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="520" y1="410" x2="520" y2="650" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="730" y1="410" x2="730" y2="650" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="900" y1="410" x2="900" y2="650" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <rect x="30" y="410" width="100" height="28" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="80" y="429" fill="white" font-size="9" font-weight="600" text-anchor="middle">DetailScreen</text>
+
+        <rect x="260" y="410" width="100" height="28" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="310" y="429" fill="white" font-size="9" font-weight="600" text-anchor="middle">DetailVM</text>
+
+        <rect x="470" y="410" width="100" height="28" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="520" y="429" fill="white" font-size="9" font-weight="600" text-anchor="middle">MovieRepo</text>
+
+        <rect x="680" y="410" width="100" height="28" rx="4" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="730" y="429" fill="white" font-size="9" font-weight="600" text-anchor="middle">ApiService</text>
+
+        <rect x="850" y="410" width="100" height="28" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="900" y="429" fill="white" font-size="9" font-weight="600" text-anchor="middle">API Server</text>
+
+        <line x1="130" y1="460" x2="258" y2="460" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="194" y="454" fill="#22d3ee" font-size="8" text-anchor="middle">Select movie</text>
+
+        <line x1="310" y1="485" x2="468" y2="485" stroke="#34d399" stroke-width="1.5" marker-end="url(#a-emerald)"/>
+        <text x="389" y="479" fill="#34d399" font-size="8" text-anchor="middle">getMovieInfo(id)</text>
+
+        <line x1="520" y1="510" x2="678" y2="510" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#a-violet)"/>
+        <text x="599" y="504" fill="#a78bfa" font-size="8" text-anchor="middle">GET /v2/movies/get-info?id=X</text>
+
+        <line x1="730" y1="535" x2="848" y2="535" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#a-amber)"/>
+        <text x="789" y="529" fill="#fbbf24" font-size="8" text-anchor="middle">HTTP GET</text>
+
+        <line x1="848" y1="565" x2="732" y2="565" stroke="#fbbf24" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="789" y="559" fill="#fbbf24" font-size="7" text-anchor="middle">200 · Movie + Episodes</text>
+
+        <line x1="678" y1="590" x2="522" y2="590" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="599" y="584" fill="#a78bfa" font-size="7" text-anchor="middle">MovieEntity</text>
+
+        <line x1="468" y1="615" x2="312" y2="615" stroke="#34d399" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="389" y="609" fill="#34d399" font-size="7" text-anchor="middle">Show detail UI</text>
+
+        <!-- Play action -->
+        <line x1="130" y1="640" x2="258" y2="640" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="194" y="634" fill="#22d3ee" font-size="8" text-anchor="middle">Press Play (episode)</text>
+
+        <rect x="180" y="660" width="140" height="22" rx="4" fill="rgba(251, 191, 36, 0.1)" stroke="#fbbf24" stroke-width="0.5"/>
+        <text x="250" y="675" fill="#fbbf24" font-size="8" text-anchor="middle">→ PlayerScreen (ExoPlayer)</text>
+
+        <!-- ═══════════════ FLOW 3: AUTH ═══════════════ -->
+        <text x="30" y="715" fill="#fb7185" font-size="13" font-weight="700">Flow 3 — Login (Email + Password)</text>
+
+        <line x1="100" y1="730" x2="100" y2="950" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="310" y1="730" x2="310" y2="950" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="520" y1="730" x2="520" y2="950" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="730" y1="730" x2="730" y2="950" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <rect x="50" y="730" width="100" height="28" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="100" y="749" fill="white" font-size="9" font-weight="600" text-anchor="middle">LoginScreen</text>
+
+        <rect x="260" y="730" width="100" height="28" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="310" y="749" fill="white" font-size="9" font-weight="600" text-anchor="middle">LoginVM</text>
+
+        <rect x="470" y="730" width="100" height="28" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="520" y="749" fill="white" font-size="9" font-weight="600" text-anchor="middle">AuthRepo</text>
+
+        <rect x="680" y="730" width="100" height="28" rx="4" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="730" y="749" fill="white" font-size="9" font-weight="600" text-anchor="middle">ApiService</text>
+
+        <line x1="150" y1="780" x2="258" y2="780" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="204" y="774" fill="#22d3ee" font-size="8" text-anchor="middle">Submit email+pass</text>
+
+        <line x1="310" y1="805" x2="468" y2="805" stroke="#34d399" stroke-width="1.5" marker-end="url(#a-emerald)"/>
+        <text x="389" y="799" fill="#34d399" font-size="8" text-anchor="middle">login(email,pass)</text>
+
+        <line x1="520" y1="830" x2="678" y2="830" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#a-violet)"/>
+        <text x="599" y="824" fill="#a78bfa" font-size="8" text-anchor="middle">POST /v2/users/login</text>
+
+        <line x1="678" y1="860" x2="522" y2="860" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="599" y="854" fill="#fb7185" font-size="7" text-anchor="middle">200 · {jwtToken, user}</text>
+
+        <line x1="468" y1="885" x2="312" y2="885" stroke="#34d399" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="389" y="879" fill="#34d399" font-size="7" text-anchor="middle">AuthEntity</text>
+
+        <!-- Store token -->
+        <rect x="330" y="900" width="180" height="20" rx="4" fill="rgba(76, 29, 149, 0.3)" stroke="#a78bfa" stroke-width="0.5"/>
+        <text x="420" y="914" fill="#a78bfa" font-size="8" text-anchor="middle">DataStore.saveToken(jwt)</text>
+
+        <rect x="330" y="925" width="180" height="20" rx="4" fill="rgba(34, 211, 238, 0.15)" stroke="#22d3ee" stroke-width="0.5"/>
+        <text x="420" y="939" fill="#22d3ee" font-size="8" text-anchor="middle">→ Navigate to Home</text>
+
+        <!-- ═══════════════ FLOW 4: SEARCH ═══════════════ -->
+        <text x="30" y="980" fill="#a78bfa" font-size="13" font-weight="700">Flow 4 — Search Movies</text>
+
+        <line x1="100" y1="995" x2="100" y2="1080" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="310" y1="995" x2="310" y2="1080" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="520" y1="995" x2="520" y2="1080" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="730" y1="995" x2="730" y2="1080" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <rect x="50" y="995" width="100" height="28" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="100" y="1014" fill="white" font-size="9" font-weight="600" text-anchor="middle">SearchScreen</text>
+
+        <rect x="260" y="995" width="100" height="28" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="310" y="1014" fill="white" font-size="9" font-weight="600" text-anchor="middle">SearchVM</text>
+
+        <rect x="470" y="995" width="100" height="28" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="520" y="1014" fill="white" font-size="9" font-weight="600" text-anchor="middle">MovieRepo</text>
+
+        <rect x="680" y="995" width="100" height="28" rx="4" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="730" y="1014" fill="white" font-size="9" font-weight="600" text-anchor="middle">ApiService</text>
+
+        <line x1="150" y1="1035" x2="258" y2="1035" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#a-cyan)"/>
+        <text x="204" y="1029" fill="#22d3ee" font-size="8" text-anchor="middle">Type query</text>
+
+        <line x1="310" y1="1055" x2="468" y2="1055" stroke="#34d399" stroke-width="1.5" marker-end="url(#a-emerald)"/>
+        <text x="389" y="1049" fill="#34d399" font-size="8" text-anchor="middle">searchMovies(q)</text>
+
+        <line x1="520" y1="1070" x2="678" y2="1070" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#a-violet)"/>
+        <text x="599" y="1064" fill="#a78bfa" font-size="8" text-anchor="middle">GET /v2/movies/search?q=...</text>
+
+        <rect x="180" y="1085" width="140" height="20" rx="4" fill="rgba(167, 139, 250, 0.1)" stroke="#a78bfa" stroke-width="0.5"/>
+        <text x="250" y="1099" fill="#a78bfa" font-size="8" text-anchor="middle">← Results Grid</text>
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header"><div class="card-dot cyan"></div><h3>Browse Flow</h3></div>
+        <ul>
+          <li>• HomeScreen → HomeVM → MovieRepo → ApiService</li>
+          <li>• Reactive: StateFlow drives UI recomposition</li>
+          <li>• D-pad navigation between grid items</li>
+          <li>• Coil loads poster images asynchronously</li>
+          <li>• Infinite scroll via page parameter</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-dot amber"></div><h3>Play Flow</h3></div>
+        <ul>
+          <li>• DetailScreen → select episode</li>
+          <li>• GET /v2/generate-link/play-max?episodeId=X</li>
+          <li>• Response: {status, url, message}</li>
+          <li>• Pass URL to ExoPlayer (HLS/m3u8)</li>
+          <li>• Fullscreen TV playback with remote control</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-dot rose"></div><h3>Auth Flow</h3></div>
+        <ul>
+          <li>• POST /v2/users/login → JWT token</li>
+          <li>• Token stored in DataStore (persistent)</li>
+          <li>• AuthInterceptor attaches Bearer token</li>
+          <li>• Login screen: email + password fields</li>
+          <li>• Google Sign-In: OAuth WebView on TV</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">DrakorID TV · Sequence Flows · August 2026</p>
+  </div>
+</body>
+</html>
