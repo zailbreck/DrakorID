@@ -37,8 +37,8 @@ interface ApiService {
     @POST("v2/users/update-picture")
     suspend fun updatePicture(@Body body: UpdatePictureRequest): Response<BaseResponse<UserEntity>>
 
-    @POST("v2/app/free-token")
-    suspend fun getFreeToken(): Response<BaseResponse<AuthEntity>>
+    @GET("v2/app/free-token")
+    suspend fun getFreeToken(): Response<FreeTokenEntity>
 
     // ═══════════════════════════════════════════
     // MOVIES
